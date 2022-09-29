@@ -22,9 +22,6 @@ class Deck:
     def __init__(self):
         self.deck = []
         self.build()
-        #make a boolean self
-
-    #build a def to check the deck and rebuild if not full!!!!!
 
     def build(self):
         for v in ['2','3','4','5','6','7','8','9','J','Q','K','A','T']:
@@ -38,11 +35,9 @@ class Deck:
     def check_deck(self):
         count = 0
         for i in self.deck:
-            #print(i.show())
             count += 1
 
         return count
-    #not needed
     def shuffle(self):
         for i in(len(self.deck)-1, 0, -1):
             r = random.randint(0, 51)
@@ -62,17 +57,7 @@ class Deck:
     def return_card(self):
         self.deck.append(User.sub_hand())
 
-    # function that will add a specific card to hand
-    # def cheat_card(self, Card):
-    #     return self.deck.pop(self.deck.index(Card))
 
-    # def cheat_card(self, val, suit):
-    #     index = 0
-    #     # for i in range(self.check_deck() - 1):
-    #     #     if self.deck(i) == (val+suit):
-    #     #         index = i
-    #
-    #     User.hand.append(deck.pop(deck.index(val+suit)))
 
 
 
@@ -83,7 +68,7 @@ class User:
     def __init__(self, name, balance):
         self.name = name
         self.balance = int (balance)
-        self.result = False
+        self.result = True
         self.hand = []
 
     def change_result(self, boolean):
@@ -126,15 +111,15 @@ class User:
     def hand_eval(self):
         #eval = {'high_card': 0, 'pair': 0, 'flush': 0, 'straight': 0, 'triple': 0, 'straight-flush': 0}
         if self.straight_flush():
-            return 19 + self.high_card()
+            return 500
         elif self.triple():
-            return 18 + self.high_card()
+            return 400
         elif self.straight():
-            return 17 + self.high_card()
+            return 300
         elif self.flush():
-            return 16 + self.high_card()
+            return 200
         elif self.pair():
-            return 15 + self.high_card()
+            return 100
         else:
             return self.high_card()
 
@@ -180,6 +165,14 @@ class User:
             high_card.append(int(i.show_val()))
         #print(max(high_card))
         return max(high_card)
+
+    def tie_break(self):
+        total = []
+        house = {10:'T',11:'J',12:'Q',13:'K',14:'A'}
+        for i in self.hand:
+            total.append(int(i.show_val()))
+        #print(max(high_card))
+        return sum(total)
 
 
 

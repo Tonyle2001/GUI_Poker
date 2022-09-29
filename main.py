@@ -70,9 +70,14 @@ while True:
     #When they click raise, game will decide who won
     if event == '-Raise-':
 
-        window['-Hand3-'].update('resources/deck/' + computer.sub_hand() + '.png')
-        window['-Hand6-'].update('resources/deck/' + player.sub_hand() + '.png')
-        window['-Play-'].update('Play Again!')
+        if not computer.display_result():
+            window['-Hand3-'].update('resources/deck/' + player.sub_hand() + '.png')
+            window['-Hand6-'].update('resources/deck/' + computer.sub_hand() + '.png')
+            window['-Play-'].update('Play Again!')
+        else:
+            window['-Hand3-'].update('resources/deck/' + computer.sub_hand() + '.png')
+            window['-Hand6-'].update('resources/deck/' + player.sub_hand() + '.png')
+            window['-Play-'].update('Play Again!')
 
         window['-Match-'].update("I Match You!")
         window['-Bet-'].update("I Raise You!")
@@ -93,13 +98,18 @@ while True:
             window['-Money-'].update("$100")
 
     # When they click flip, game will decide who won
-    if event == '-Flip-' or event == '-Fold-':
-        window['-Hand3-'].update('resources/deck/'+computer.sub_hand()+'.png')
-        window['-Hand6-'].update('resources/deck/'+player.sub_hand()+'.png')
-        window['-Play-'].update('Play Again!')
+    if event == '-Flip-':
+        if not computer.display_result():
+            window['-Hand3-'].update('resources/deck/' + player.sub_hand() + '.png')
+            window['-Hand6-'].update('resources/deck/' + computer.sub_hand() + '.png')
+            window['-Play-'].update('Play Again!')
+        else:
+            window['-Hand3-'].update('resources/deck/'+computer.sub_hand()+'.png')
+            window['-Hand6-'].update('resources/deck/'+player.sub_hand()+'.png')
+            window['-Play-'].update('Play Again!')
 
         # If they won
-        if player.display_result() and event == '-Flip-':
+        if player.display_result():
             window['-Balance-'].update(player.change_balance(money))
             window['-Results-'].update("You won!")
             money = 100
@@ -111,10 +121,22 @@ while True:
             window['-Results-'].update("You Lost!")
             money = 100
             window['-Money-'].update("$100")
+    #if they fold, they will just lose $100
+    if event == '-Fold-':
+        window['-Hand3-'].update('resources/deck/' + computer.sub_hand() + '.png')
+        window['-Hand6-'].update('resources/deck/' + player.sub_hand() + '.png')
+        window['-Play-'].update('Play Again!')
+
+        window['-Balance-'].update(player.change_balance(-1 * money))
+        window['-Results-'].update("You Gave Up!")
+        money = 100
+        window['-Money-'].update("$100")
 
     #This will start and countine the game for user
     if event == '-Play-':
         deck = Deck()
+        deck.shuffle()
+        deck.shuffle()
         computer.add_hand(deck)
         computer.add_hand(deck)
         computer.add_hand(deck)
@@ -122,27 +144,44 @@ while True:
         player.add_hand(deck)
         player.add_hand(deck)
 
+        p_points = player.hand_eval()
+        c_points = computer.hand_eval()
         chance = random.randint(1,10)
         print(chance)
-        if computer.hand_eval() < player.hand_eval() and chance < 4:
+        print("Before = Player hand: "+ str(player.hand_eval()))
+        print("Before = Computer hand: " +str(computer.hand_eval()))
+        if c_points == p_points:
+            c_points += computer.tie_break()
+            p_points += player.tie_break()
+
+        if c_points < p_points and chance < 4:
             #player win
             player.change_result(True)
+            computer.change_result(True)
+        elif c_points > p_points:
+            computer.change_result(True)
+            player.change_result(False)
         else:
-            #player lose
-            player.hand.append(computer.hand.pop())
-            player.hand.append(computer.hand.pop())
-            player.hand.append(computer.hand.pop())
-            computer.hand.append(player.hand.pop(0))
-            computer.hand.append(player.hand.pop(0))
-            computer.hand.append(player.hand.pop(0))
+            window['-Hand1-'].update('resources/deck/' + player.sub_hand() + '.png')
+            window['-Hand2-'].update('resources/deck/' + player.sub_hand() + '.png')
+            window['-Hand3-'].update('resources/card_back.png')
+            window['-Hand4-'].update('resources/deck/' + computer.sub_hand() + '.png')
+            window['-Hand5-'].update('resources/deck/' + computer.sub_hand() + '.png')
+            window['-Hand6-'].update('resources/card_back.png')
+
+            computer.change_result(False)
             player.change_result(False)
 
-        window['-Hand1-'].update('resources/deck/'+computer.sub_hand()+'.png')
-        window['-Hand2-'].update('resources/deck/'+computer.sub_hand()+'.png')
-        window['-Hand3-'].update('resources/card_back.png')
-        window['-Hand4-'].update('resources/deck/'+player.sub_hand()+'.png')
-        window['-Hand5-'].update('resources/deck/'+player.sub_hand()+'.png')
-        window['-Hand6-'].update('resources/card_back.png')
+
+
+        if computer.display_result():
+            window['-Hand1-'].update('resources/deck/'+computer.sub_hand()+'.png')
+            window['-Hand2-'].update('resources/deck/'+computer.sub_hand()+'.png')
+            window['-Hand3-'].update('resources/card_back.png')
+            window['-Hand4-'].update('resources/deck/'+player.sub_hand()+'.png')
+            window['-Hand5-'].update('resources/deck/'+player.sub_hand()+'.png')
+            window['-Hand6-'].update('resources/card_back.png')
+
         window['-Results-'].update("")
 
         window['-Match-'].update("")
