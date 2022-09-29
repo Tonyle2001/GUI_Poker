@@ -60,9 +60,6 @@ class Deck:
 
 
 
-
-
-
 class User:
 
     def __init__(self, name, balance):
@@ -88,6 +85,9 @@ class User:
         total += amount
         self.balance = total
         return self.balance
+
+    def clear_hand(self):
+        self.hand.clear()
 
     def add_hand(self,game):
         self.hand.append(game.draw_card())
@@ -166,13 +166,14 @@ class User:
         #print(max(high_card))
         return max(high_card)
 
-    def tie_break(self):
+    def tie_break(self, spot):
         total = []
         house = {10:'T',11:'J',12:'Q',13:'K',14:'A'}
         for i in self.hand:
             total.append(int(i.show_val()))
         #print(max(high_card))
-        return sum(total)
+        total.sort()
+        return total[spot]
 
 
 

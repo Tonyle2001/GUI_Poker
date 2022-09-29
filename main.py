@@ -26,7 +26,7 @@ while True:
         window.close()
         break
 
-
+#The bet amount that will be displayed for both computer and player
 money = 100
 
 #The game page of what the playing table will look like.
@@ -38,13 +38,14 @@ game_layout = [
     [sg.Button("Flip", key = '-Flip-'),sg.Button("Raise", key = '-Raise-'),sg.Text( "$" + str(money), key = '-Money-'),sg.Button("+", key = '-Plus-'),sg.Button("-", key = '-Minus-')],
     [sg.Button('Play!', key = '-Play-'),sg.Button('Fold', key = '-Fold-'),sg.Text("", key = '-Results-')],
     [sg.Image('resources/card_back.png', key = '-Hand4-'), sg.Image('resources/card_back.png', key = '-Hand5-'), sg.Image('resources/card_back.png', key = '-Hand6-')],
-    [sg.Text(player.display_name()), sg.Text(player.display_balance(), key = '-Balance-'), sg.Exit()]
+    [sg.Text(player.display_name() + " $"), sg.Text(player.display_balance(), key = '-Balance-'), sg.Exit()]
 ]
-#The exit page after the user exit/loses the game.
-exit_layout = [
-    [sg.Text("Thank You")],
-    [sg.Text(player.display_name()+ " For Playing!")]
-]
+# #The exit page after the user exit/loses the game.
+# exit_layout = [
+#     [sg.Text("Thank You")],
+#     [sg.Text(player.display_name()+ " For Playing!")],
+#     [sg.Text("Your Ending Balance: $"+ str(player.display_balance()))]
+# ]
 # Create the window
 window = sg.Window("Poker", game_layout, size = (400,400))
 
@@ -69,8 +70,8 @@ while True:
 
     #When they click raise, game will decide who won
     if event == '-Raise-':
-
-        if not computer.display_result():
+        #switch the last card for the computer and player
+        if False == computer.display_result():
             window['-Hand3-'].update('resources/deck/' + player.sub_hand() + '.png')
             window['-Hand6-'].update('resources/deck/' + computer.sub_hand() + '.png')
             window['-Play-'].update('Play Again!')
@@ -99,7 +100,8 @@ while True:
 
     # When they click flip, game will decide who won
     if event == '-Flip-':
-        if not computer.display_result():
+        #switch the last card for the computer and player
+        if False == computer.display_result():
             window['-Hand3-'].update('resources/deck/' + player.sub_hand() + '.png')
             window['-Hand6-'].update('resources/deck/' + computer.sub_hand() + '.png')
             window['-Play-'].update('Play Again!')
@@ -137,6 +139,12 @@ while True:
         deck = Deck()
         deck.shuffle()
         deck.shuffle()
+
+        #clears the hand of the players before starting a new round
+        computer.clear_hand()
+        player.clear_hand()
+
+        #Add 3 new cards for each player
         computer.add_hand(deck)
         computer.add_hand(deck)
         computer.add_hand(deck)
@@ -144,17 +152,23 @@ while True:
         player.add_hand(deck)
         player.add_hand(deck)
 
+        #Using the evaluator functions made in the User class to determine who wins
         p_points = player.hand_eval()
         c_points = computer.hand_eval()
+        #Cheating algorithm to make the player less probable of winning
         chance = random.randint(1,10)
         print(chance)
-        print("Before = Player hand: "+ str(player.hand_eval()))
-        print("Before = Computer hand: " +str(computer.hand_eval()))
-        if c_points == p_points:
-            c_points += computer.tie_break()
-            p_points += player.tie_break()
+        #DEBUGGING CODE
+        # print("Before = Player hand: "+ str(player.hand_eval()) + str(player.show_hand()))
+        # print("Before = Computer hand: " +str(computer.hand_eval()) + str(computer.show_hand()))
+        #This while loop will determine ties
+        spot = 1
+        while c_points == p_points and spot > -1 :
+            c_points += computer.tie_break(spot)
+            p_points += player.tie_break(spot)
+            spot -=1
 
-        if c_points < p_points and chance < 4:
+        if c_points < p_points and chance < 5:
             #player win
             player.change_result(True)
             computer.change_result(True)
@@ -189,11 +203,13 @@ while True:
         window['-Bet1-'].update("Bet Amount: $100")
         window['-Bet2-'].update("Bet Amount: $100")
 
-
-
-
-
     if event == "Exit" or player.display_balance() <= 0:
+        # The exit page after the user exit/loses the game.
+        exit_layout = [
+            [sg.Text("Thank You")],
+            [sg.Text(player.display_name() + " For Playing!")],
+            [sg.Text("Your Ending Balance: $" + str(player.display_balance()))]
+        ]
         window.close()
         window = sg.Window("Poker", exit_layout)
         window.read()
