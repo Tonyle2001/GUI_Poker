@@ -180,71 +180,9 @@ class User:
             high_card.append(int(i.show_val()))
         #print(max(high_card))
         return max(high_card)
-        # #This part is to deal with converting the value num back to value name
-        # if max(high_card) in [10, 11, 12, 13, 14]:
-        #     #print(house.get(max(high_card)))
-        #     return house.get(max(high_card))
-        # else:
-        #     #print(max(high_card))
-        #     return max(high_card)
 
 
 
 
-player = User("Tony", 1000)
-player2 = User("andrew", 1000)
-
-#YOU MUST KEEP THIS ON
-#deck = Deck()
-
-#print(deck.check_deck())
-
-# while True:
-#     if deck.check_deck() < 22:
-#         deck.clear()
-
-
-#
-# player.add_cheat_card('K','d')
-# player.add_cheat_card('2','d')
-# player.add_cheat_card('A','d')
-# player2.add_cheat_card('T','d')
-# player2.add_cheat_card('Q','d')
-# player2.add_cheat_card('J','d')
-#
-# chance = random.randint(1,10)
-# print(chance)
-# if player.hand_eval() < player2.hand_eval() and chance < 4:
-#     print("player 2 is the winner")
-# else:
-#     player.hand.append(player2.hand.pop())
-#     player.hand.append(player2.hand.pop())
-#     player.hand.append(player2.hand.pop())
-#     player2.hand.append(player.hand.pop(0))
-#     player2.hand.append(player.hand.pop(0))
-#     player2.hand.append(player.hand.pop(0))
-#     print("player 1 is the winner")
-#
-# print (player.show_hand())
-# print (player2.show_hand())
-
-
-
-# deck.shuffle()
-# deck.shuffle()
-# deck.shuffle()
-# player.add_hand()
-# player.add_hand()
-# player.add_hand()
-# print (player.show_hand())
-# player.sub_hand()
-# player.sub_hand()
-# player.show_hand()
-# player.add_hand(deck.draw_card())
-#player.show_hand()
-#player.hand_eval()
-#player.add_cheat_card('9', 'd')
-
-#player.hand_eval()
 
 
